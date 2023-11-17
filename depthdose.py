@@ -41,7 +41,7 @@ for cutoff_energy in cutoff_energies:
     total_distance_travelled = np.flip(np.cumsum(np.flip(distance_arr)))
     data['Cumulative_Distance'] = total_distance_travelled
     filtered_stopping_power = np.flip(np.cumsum(np.flip(data['Filtered_Stopping_Power'])))
-    dose = filtered_stopping_power * density  # Calculate dose
+    dose = filtered_stopping_power * density / 1000  # Calculate dose
 
     bragg_peak_location = total_distance_travelled[exclude_initial_points:][np.argmax(data['Filtered_Stopping_Power'][exclude_initial_points:])]
     print('Bragg peak at {} for energy {} MeV'.format(bragg_peak_location, cutoff_energy))

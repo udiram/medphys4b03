@@ -46,17 +46,21 @@ for i, mass_stopping_power in enumerate(df['Stopping_power']):
 # Exclude initial points from the plot
 total_distance_travelled = np.flip(np.cumsum(np.flip(distance_arr)))
 data['Cumulative_Distance'] = total_distance_travelled
-filtered_stopping_power = np.flip(np.cumsum(np.flip(data['Filtered_Stopping_Power'])))
+filtered_stopping_power = np.flip(np.cumsum(np.flip(data['Filtered_Stopping_Power']))) / 1000
 
 # Calculate fluence values for both non-modified and modified cases
 fluence_values_original = np.ones_like(total_distance_travelled)
 fluence_values_modified = np.array([calculate_fluence(d) for d in total_distance_travelled])
 
+# Find the Bragg peak position for both non-modified and modified cases
+bragg_peak_position_original = total_distance_travelled[np.argmax(filtered_stopping_power)]
+bragg_peak_position_modified = total_distance_travelled[np.argmax(filtered_stopping_power * fluence_values_original * 0.75)]
+
 # Plot the graph with both non-modified and modified fluence
-plt.plot(total_distance_travelled[exclude_initial_points:], filtered_stopping_power[exclude_initial_points:] * fluence_values_original[exclude_initial_points:], 'b', label='Non-Modified Fluence')
-plt.plot(total_distance_travelled[exclude_initial_points:], filtered_stopping_power[exclude_initial_points:] * fluence_values_modified[exclude_initial_points:], 'r', label='Modified Fluence')
+plt.plot(total_distance_travelled[exclude_initial_points:], filtered_stopping_power[exclude_initial_points:] * fluence_values_original[exclude_initial_points:], 'b', label=f'Non-Modified Fluence (Bragg Peak at {bragg_peak_position_original:.2f} cm)')
+plt.plot(total_distance_travelled[exclude_initial_points:], filtered_stopping_power[exclude_initial_points:] * fluence_values_original[exclude_initial_points:] * 0.75, 'r', label=f'Modified Fluence (Bragg Peak at {bragg_peak_position_modified:.2f} cm)')
 plt.xlabel('Distance Travelled (cm)')
 plt.ylabel('Stopping Power (MeV/cm)')
-plt.title('Stopping Power vs Distance Travelled with Non-Modified and Modified Fluence')
+plt.title('Stopping Power vs Distance Travelled with Modified Fluence')
 plt.legend()
 plt.show()
